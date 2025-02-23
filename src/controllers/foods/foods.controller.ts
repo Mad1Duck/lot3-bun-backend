@@ -1,5 +1,5 @@
 import { FOOD_TOPIC } from "@/constants/topics";
-import { createFood, listFood } from "@/services/foods.service";
+import { createFood, deleteFood, listFood, updateFood } from "@/services/foods.service";
 import { catchAsync } from "@/utils/catchAsync";
 import { FoodSchemaType } from "@/validator/food.validator";
 import { broadcastToTopic } from "@/websocket";
@@ -22,9 +22,23 @@ export const postFood = catchAsync(async (c) => {
 });
 
 export const patchFood = catchAsync(async (c) => {
+  const item = await c.req.parseBody() as unknown as FoodSchemaType;
+  const id = c.req.param('id');
 
+  const result = await updateFood({ item, id });
+
+
+  broadcastToTopic(FOOD_TOPIC, JSON.stringify({ type: "update", data: result }));
+
+  return c.json({ data: result });
 });
 
 export const removeFood = catchAsync(async (c) => {
+  const id = c.req.param('id');
 
+  const result = await deleteFood({ id });
+
+  broadcastToTopic(FOOD_TOPIC, JSON.stringify({ type: "delete", data: result }));
+
+  return c.json({ data: result });
 });
