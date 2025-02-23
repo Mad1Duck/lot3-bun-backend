@@ -8,11 +8,15 @@ import type { JwtVariables } from 'hono/jwt';
 import routes from './routes';
 import { errorHandler } from '@/middleware/error.middleware';
 import { join } from 'path';
-import { ServerWebSocket } from 'bun';
+import { wsHandler } from './websocket';
 
 const { upgradeWebSocket, websocket } = createBunWebSocket();
 
+
 type Variables = JwtVariables;
+
+
+export const clients = new Set<WebSocket>();
 
 const app = new Hono<{ Variables: Variables; }>()
   .use(logger())
@@ -54,36 +58,15 @@ const app = new Hono<{ Variables: Variables; }>()
       return filePath;
     }
   }))
-
+  .get('/ws/:topic', wsHandler)
   .route('/api', routes)
-  .get('/ws/:topic', upgradeWebSocket((c) => {
-    const topic = c.req.param('topic');
-
-    return {
-      onOpen(_, ws) {
-        const rawWs = ws.raw as ServerWebSocket;
-        rawWs.subscribe(topic);
-        console.log(`Client connected and subscribed to '${topic}'`);
-      },
-      onMessage(evt, ws) {
-        const message = evt.data;
-        const rawWs = ws.raw as ServerWebSocket;
-        console.log(`Message on '${topic}':`, message);
-        rawWs.publish(topic, message.toString());
-      },
-      onClose(_, ws) {
-        const rawWs = ws.raw as ServerWebSocket;
-        rawWs.unsubscribe(topic);
-        console.log(`Client disconnected from '${topic}'`);
-      },
-    };
-  }))
 
   .onError(errorHandler);
 
 export default {
   port: process.env.PORT || 8080,
   fetch: app.fetch,
+  websocket
 };
 
 export type AppType = typeof app;

@@ -79,10 +79,10 @@ model Foods {
   name            String
   description     String?
   price           Float
-  categoryId      String
+  categoryId      String?
   isAvailable     Boolean           @default(false)
   imageURL        String
-  timeToCook      DateTime?         @db.Timestamptz(3)
+  timeToCook      Int
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
   FoodCategory    FoodCategory[]
