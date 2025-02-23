@@ -29,7 +29,7 @@ export const login = catchAsync(async (c) => {
     if (verifiedPassword) {
       const { id, email, firstName, lastName, roles } = findUser;
       const token = await generateToken({ email, id });
-      return c.json({ data: { firstName, lastName, email, roles, authoritation: { token: token } } });
+      return c.json({ data: { firstName, lastName, email, roles, authorization: { token: token } } });
     }
     throw new ApiError(HttpStatus.default.UNAUTHORIZED, { message: "unauthorize" });
   }
