@@ -21,6 +21,7 @@ model User {
   emailConfirmations EmailConfirmation[]
   phoneConfirmations PhoneConfirmation[]
   roles              TrUserRole[]
+  Order              Order[]
 }
 
 model TrUserRole {
@@ -73,6 +74,107 @@ model SubscriptionPlan {
   updatedAt    DateTime     @default(now()) @updatedAt
 }
 
+model Foods {
+  id              String            @id @default(uuid()) @db.Uuid
+  name            String
+  description     String?
+  price           Float
+  categoryId      String
+  isAvailable     Boolean           @default(false)
+  imageURL        String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  timeToCook      DateTime?         @db.Timestamptz(3)
+  FoodCategory    FoodCategory[]
+  FoodIngredients FoodIngredients[]
+  OrderItem       OrderItem[]
+}
+
+model Category {
+  id           String         @id @default(uuid()) @db.Uuid
+  name         String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  FoodCategory FoodCategory[]
+}
+
+model FoodCategory {
+  id         String   @id @default(uuid()) @db.Uuid
+  foodId     String   @db.Uuid
+  categoryId String   @db.Uuid
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  Food       Foods    @relation(fields: [foodId], references: [id])
+  Category   Category @relation(fields: [categoryId], references: [id])
+}
+
+model Ingredients {
+  id              String            @id @default(uuid()) @db.Uuid
+  name            String
+  stock           Float
+  unit            String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  FoodIngredients FoodIngredients[]
+}
+
+model FoodIngredients {
+  id           String      @id @default(uuid()) @db.Uuid
+  foodId       String      @db.Uuid
+  ingredientId String      @db.Uuid
+  quantity     Float
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @default(now()) @updatedAt
+  Food         Foods       @relation(fields: [foodId], references: [id])
+  Ingredient   Ingredients @relation(fields: [ingredientId], references: [id])
+}
+
+model Order {
+  id           String         @id @default(uuid()) @db.Uuid
+  userId       String?        @db.Uuid
+  tableId      String?        @db.Uuid
+  status       OrderStatus    @default(PENDING)
+  totalAmount  Float
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  OrderItem    OrderItem[]
+  Table        Tables[]
+  KitchenOrder KitchenOrder[]
+  User         User?          @relation(fields: [userId], references: [id])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid()) @db.Uuid
+  orderId   String   @db.Uuid
+  foodId    String   @db.Uuid
+  quantity  Float
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Order     Order    @relation(fields: [orderId], references: [id])
+  Food      Foods    @relation(fields: [foodId], references: [id])
+}
+
+model KitchenOrder {
+  id        String             @id @default(uuid()) @db.Uuid
+  orderId   String             @db.Uuid
+  status    KitchenOrderStatus @default(PENDING)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now()) @updatedAt
+  Order     Order              @relation(fields: [orderId], references: [id])
+}
+
+model Tables {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  capacity  Int
+  isBooked  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Order     Order?   @relation(fields: [orderId], references: [id])
+  orderId   String?  @db.Uuid
+}
+
 enum RoleName {
   USER
   ADMINISTRATOR
@@ -81,4 +183,17 @@ enum RoleName {
 enum BillingCycle {
   MONTHLY
   YEARLY
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARING
+  READY
+  COMPLETED
+}
+
+enum KitchenOrderStatus {
+  PENDING
+  COOKING
+  DONE
 }
