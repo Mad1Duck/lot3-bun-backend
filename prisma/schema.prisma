@@ -82,9 +82,9 @@ model Foods {
   categoryId      String
   isAvailable     Boolean           @default(false)
   imageURL        String
+  timeToCook      DateTime?         @db.Timestamptz(3)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @default(now()) @updatedAt
-  timeToCook      DateTime?         @db.Timestamptz(3)
   FoodCategory    FoodCategory[]
   FoodIngredients FoodIngredients[]
   OrderItem       OrderItem[]

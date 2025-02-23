@@ -1,6 +1,6 @@
 import { createUser, getUser } from "@/services/auth.service";
 import { catchAsync } from "@/utils/catchAsync";
-import { loginSchemaType, registerSchemaType } from "@/utils/validator/auth.validator";
+import { loginSchemaType, registerSchemaType } from "@/validator/auth.validator";
 import { isEmpty } from "lodash";
 import { bcryptVerify } from "@/utils/hashing";
 import ApiError from "@/utils/ApiError";
