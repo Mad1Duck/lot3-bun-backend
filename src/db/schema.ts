@@ -13,6 +13,9 @@ import {
 } from 'drizzle-orm/pg-core';
 import { billingCycleEnum, invoiceStatusEnum, paymentStatusEnum, subscriptionStatusEnum, userTokenTypeEnum } from './enums';
 
+export * from "./enums";
+
+
 // Users (platform-level: superadmin & owner organisasi)
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -140,7 +143,7 @@ export const invoices = pgTable('invoices', {
   amount: integer('amount').notNull(),
   currency: varchar('currency', { length: 10 }).default('IDR'),
   taxAmount: integer('tax_amount').default(0),
-  status: invoiceStatusEnum('status').default('unpaid'),
+  status: invoiceStatusEnum('invoice_status').default('unpaid'),
   issuedAt: timestamp('issued_at').defaultNow(),
   dueAt: timestamp('due_at').notNull(),
   paidAt: timestamp('paid_at'),

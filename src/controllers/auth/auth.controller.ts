@@ -43,7 +43,7 @@ export const login = catchAsync(async (c) => {
   const payload = {
     id: findUser.id,
     email: findUser.email,
-    roles: findUser.roles?.[0] || ""
+    roles: findUser.roles || ""
   };
 
   const accessToken = await generateToken(payload);
@@ -60,7 +60,7 @@ export const login = catchAsync(async (c) => {
       roles: payload.roles,
       authorization: {
         token: accessToken,
-        refreshToken,
+        refreshToken: token,
       },
     },
   });
