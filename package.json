@@ -3,15 +3,13 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts"
   },
-  "prisma": {
-    "seed": "bun run prisma/seeders/seeds.ts"
-  },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.0",
-    "@prisma/client": "^6.4.1",
     "@types/lodash": "^4.17.15",
     "@types/nodemailer": "^6.4.17",
     "bullmq": "^5.41.5",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.43.1",
     "file-type": "^20.1.0",
     "hono": "^4.7.2",
     "http-status": "^2.1.0",
@@ -20,6 +18,7 @@
     "midtrans-client": "^1.4.2",
     "nanoid": "^5.1.0",
     "nodemailer": "^6.10.0",
+    "pg": "^8.16.0",
     "sharp": "^0.33.5",
     "uploadthing": "^7.5.2",
     "uuid": "^11.1.0",
@@ -28,8 +27,10 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^22.13.5",
-    "prisma": "^6.4.1",
+    "@types/pg": "^8.15.2",
+    "drizzle-kit": "^0.31.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.7.3"
   }
 }

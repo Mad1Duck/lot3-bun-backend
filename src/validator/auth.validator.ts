@@ -6,7 +6,6 @@ const passwordSchema = z.string()
   .regex(/\d/, "Password must contain at least one number.")
   .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one symbol.");
 
-
 export const loginSchema = z.object({
   username: z.string().min(1),
   password: z.string().min(1),
@@ -24,3 +23,9 @@ export const registerSchema = z.object({
 });
 
 export type registerSchemaType = z.infer<typeof registerSchema>;
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token is required."),
+});
+
+export type refreshTokenSchemaType = z.infer<typeof refreshTokenSchema>;

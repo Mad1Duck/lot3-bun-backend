@@ -15,9 +15,9 @@ export const authenticationStoreOwner = catchAsync(async (c, next) => {
 
 export const authenticationUser = catchAsync(async (c, next) => {
   const { id } = c.get("jwtPayload");
-  const findUser = await getUserById({ id });
+  const findUser = await getUserById(id);
 
-  if (!isEmpty(findUser) && (_.find(findUser?.roles, (item) => item.role.name === "USER"))) {
+  if (!isEmpty(findUser) && (_.find(findUser?.roles, (item) => item === "Admin"))) {
     return await next();
   } else {
     throw new ApiError(HttpStatus.default.UNAUTHORIZED, { message: "unauthorize" });
@@ -26,9 +26,9 @@ export const authenticationUser = catchAsync(async (c, next) => {
 
 export const authenticationAdministrator = catchAsync(async (c, next) => {
   const { id } = c.get("jwtPayload");
-  const findUser = await getUserById({ id });
+  const findUser = await getUserById(id);
 
-  if (!isEmpty(findUser) && (_.find(findUser?.roles, (item) => item.role.name === "ADMINISTRATOR"))) {
+  if (!isEmpty(findUser) && (_.find(findUser?.roles, (item) => item === "Owner"))) {
     return await next();
   } else {
     throw new ApiError(HttpStatus.default.UNAUTHORIZED, { message: "unauthorize" });

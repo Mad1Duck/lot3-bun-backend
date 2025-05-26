@@ -1,4 +1,4 @@
-import { prisma } from "@/bin/database";
+import { prisma } from "@/db";
 import { RoleTypes } from "@/types/db-schema/roles";
 
 export const findRole = ({ id, name }: RoleTypes) => {
