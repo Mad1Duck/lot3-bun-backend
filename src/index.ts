@@ -64,7 +64,7 @@ const app = new Hono<{ Variables: Variables; }>()
   .onError(errorHandler);
 
 export default {
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 3001,
   fetch: app.fetch,
   websocket
 };

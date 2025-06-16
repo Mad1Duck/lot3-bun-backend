@@ -1,0 +1,51 @@
+on:
+  push:
+    branches: [development]
+
+jobs:
+  build:
+    runs-on: [self-hosted, lot3-backend]
+    env:
+      ENV_FILE: .env
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Clear Bun Version
+        run: bun -v
+
+      - name: Check current working directory
+        run: |
+          echo "Current directory: $(pwd)"
+
+      - name: Add Permissions
+        run: chmod -R 755 /home/app/lot3/backend
+
+      - name: Copy to jitsi-backend only if different
+        run: |
+          SOURCE_DIR=$(pwd)
+          TARGET_DIR="/home/app/lot3/backend"
+
+          if [ "$SOURCE_DIR" != "$TARGET_DIR" ]; then
+            rm -rf "$TARGET_DIR"/*
+            cp -r "$SOURCE_DIR"/. "$TARGET_DIR"
+          else
+            echo "Source and target directories are the same, skipping copy."
+          fi
+
+      - name: Check target directory
+        working-directory: /home/app/lot3/backend
+        run: |
+          echo "Target directory: $(pwd)"
+
+      - name: Install dependencies with Bun
+        working-directory: /home/app/lot3/backend
+        run: bun install
+
+      - name: Generate Prisma Client
+        working-directory: /home/app/lot3/backend
+        run: bunx drizzle-kit generate
+
+      - name: Restart PM2 Process
+        working-directory: /home/app/lot3/backend
+        run: pm2 restart ecosystem.config.js

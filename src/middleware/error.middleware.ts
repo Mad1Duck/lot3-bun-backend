@@ -1,11 +1,10 @@
-import { Prisma } from "@prisma/client";
 import { Context, ErrorHandler } from "hono";
 import { HTTPResponseError } from "hono/types";
 import { HTTPException } from "hono/http-exception";
 import { ContentfulStatusCode } from "hono/utils/http-status";
 import ApiError from "@/utils/ApiError";
 
-const handlePrismaError = (error: Prisma.PrismaClientKnownRequestError) => {
+const handleDBerror = (error: any) => {
 
   switch (error.stack) {
     case 'P2002':
@@ -27,21 +26,21 @@ const handlePrismaError = (error: Prisma.PrismaClientKnownRequestError) => {
   }
 };
 
-export const errorConverter = async (error: { statusCode: ContentfulStatusCode; message: string; }) => {
+export const errorConverter = async (error: any) => {
   let response: ApiError;
 
-  if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    response = handlePrismaError(error);
+  if (error) {
+    response = handleDBerror(error);
   } else {
-    const statusCode = error.statusCode || 500;
-    const message = error.message || 'Internal Server Error';
+    const statusCode = error?.statusCode || 500;
+    const message = error?.message || 'Internal Server Error';
     response = new ApiError(statusCode, {
       message: message,
     });
   }
 
   return {
-    statusCode: error.statusCode,
+    statusCode: error?.statusCode || 500,
     response: response,
   };
 };

@@ -13,4 +13,11 @@ export const emailConfig = {
     user: process.env.EMAIL_USER || 'your-email@example.com',
     pass: process.env.EMAIL_PASS || 'your-email-password',
   },
+
+};
+
+export const ERC721Config = {
+  contractAddress: process.env.CONTRACT_ADDRESS || '0x9E8B1666Eb68499E632b23e08F66Ead3DcD92089',
+  privateKey: process.env.PRIVATE_KEY || 'ef9cdb1511f3821d0127cb0277009675ca68c9b0b39186d64e89e7fb9b2b3f28',
+  rpcURL: process.env.RPC_URL || 'https://testnet-rpc.monad.xyz/'
 };
