@@ -15,53 +15,47 @@ const templatePath = path.join(__dirname, '..', '..', '..', 'public', 'template'
 const outputPath = path.join(__dirname, '..', '..', '..', 'public', 'output.png');
 
 export const generateImage = catchAsync(async (c) => {
+  const { ticketNumber } = await c.req.parseBody();
+  const parseTicketNumber = JSON.parse(ticketNumber as string);
 
-  try {
-    const { ticketNumber } = await c.req.parseBody();
-    const parseTicketNumber = JSON.parse(ticketNumber as string);
+  // generate image
+  console.log("-----startConvert-----");
 
-    // generate image
-    console.log("-----startConvert-----");
+  const imagePath = await htmlToImage(templatePath, outputPath, {
+    ticketNumber: parseTicketNumber,
+    enrollDate: moment().format('YYYY-MM-DD'),
+  });
+  console.log(imagePath, '-----imagePath-----');
 
-    const imagePath = await htmlToImage(templatePath, outputPath, {
-      ticketNumber: parseTicketNumber,
-      enrollDate: moment().format('YYYY-MM-DD'),
-    });
-    console.log(imagePath, '-----imagePath-----');
+  console.log("-----buffer-----");
+  const imageBuffer = fs.readFileSync(imagePath);
+  console.log("-----base64-----");
+  const base64String = imageBuffer.toString('base64');
+  console.log("-----endConvert-----");
 
-    console.log("-----buffer-----");
-    const imageBuffer = fs.readFileSync(imagePath);
-    console.log("-----base64-----");
-    const base64String = imageBuffer.toString('base64');
-    console.log("-----endConvert-----");
+  // uplaod image ipfs
+  console.log("-----startPinata-----");
+  const upload = await pinata.upload.public.base64(base64String);
+  console.log("-----endPinata-----");
 
-    // uplaod image ipfs
-    console.log("-----startPinata-----");
-    const upload = await pinata.upload.public.base64(base64String);
-    console.log("-----endPinata-----");
+  fs.unlinkSync(imagePath);
 
-    fs.unlinkSync(imagePath);
+  // upload ipfs metadata
+  const metadata = {
+    imageCID: upload.cid,
+    ticketNumber: parseTicketNumber,
+  };
 
-    // upload ipfs metadata
-    const metadata = {
-      imageCID: upload.cid,
-      ticketNumber: parseTicketNumber,
-    };
-
-    const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
+  const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
 
 
 
-    return c.json({ cid: uploadedMetadata.path });
+  return c.json({ cid: uploadedMetadata.path });
 
-    // return c.body(imageBuffer, 200, {
-    //   'Content-Type': 'image/png',
-    //   'Content-Disposition': 'inline; filename="result.png"'
-    // });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
+  // return c.body(imageBuffer, 200, {
+  //   'Content-Type': 'image/png',
+  //   'Content-Disposition': 'inline; filename="result.png"'
+  // });
 });
 
 export const mintTicket = catchAsync(async (c) => {
