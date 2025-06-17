@@ -3,14 +3,31 @@ import fs from "fs";
 import path from "path";
 import { isArray } from "lodash";
 
-export interface metadata {
+export interface Metadata {
   ticketNumber: number[],
   enrollDate: string,
 }
 
-export async function htmlToImage(templatePath: string, outputPath = "output.png", metadata: metadata) {
+export async function htmlToImage(templatePath: string, outputPath = "output.png", metadata: Metadata) {
   let browser;
   try {
+    // Baca template file HTML
+    let template = fs.readFileSync(templatePath, "utf8");
+
+    // Replace metadata {{key}}
+    for (const [key, value] of Object.entries(metadata)) {
+      const regex = new RegExp(`{{${key}}}`, "g");
+      template = template.replace(regex, isArray(value) ? value.join("") : value);
+    }
+
+    // Replace {{num0}}, {{num1}}, dst kalau ada ticketNumber array
+    if (metadata.ticketNumber) {
+      metadata.ticketNumber.forEach((value: any, index: any) => {
+        const regex = new RegExp(`{{num${index}}}`, "g");
+        template = template.replace(regex, String(value));
+      });
+    }
+
     browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
@@ -18,8 +35,11 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
     const page = await browser.newPage();
     await page.setViewport({ width: 800, height: 600 });
 
-    await page.setContent(templatePath, { waitUntil: 'networkidle0' });
-    await page.waitForSelector('#ticket');
+    // Masukkan HTML hasil replace ke page
+    await page.setContent(template, { waitUntil: 'networkidle0' });
+
+    // Tunggu elemen #ticket muncul
+    await page.waitForSelector('#ticket', { timeout: 5000 });
 
     const ticketElement = await page.$('#ticket');
     if (!ticketElement) {
@@ -32,6 +52,13 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
       throw new Error("#ticket element invisible / no bounding box.");
     }
 
+    // Pastikan folder output ada
+    const dir = path.dirname(outputPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    // Screenshot element
     await ticketElement.screenshot({ path: outputPath as `${string}.png` });
 
     console.log(`Screenshot saved at: ${outputPath}`);
@@ -47,7 +74,7 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
 export async function svgManipulator(
   templatePath: string,
   outputPath = "output/output.png",
-  metadata: metadata
+  metadata: Metadata
 ) {
   try {
     const dir = path.dirname(outputPath);
