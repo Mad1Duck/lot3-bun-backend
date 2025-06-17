@@ -1,7 +1,7 @@
 {
   "name": "authentication-service",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
+    "dev": "bun run src/index.ts",
     "prod": "bun run src/index.ts",
     "seed": "bun src/db/seed.ts"
   },
