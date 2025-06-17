@@ -79,16 +79,14 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
       try {
         const pages = await browser.pages();
         await Promise.all(pages.map((page) => page.close()));
-
-        await Promise.race([
-          browser.close(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout saat menutup browser')), 5000)
-          ),
-        ]);
-      } catch (error) {
-        console.error("Error saat menutup browser:", error);
+      } catch (e) {
+        console.error("Error saat menutup halaman browser:", e);
       }
+
+      browser.close().catch((e) => {
+        console.error("Error saat menutup browser:", e);
+      });
+      // Note: tidak di-`await` supaya tidak melempar error ke caller
     }
   }
 }
