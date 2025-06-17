@@ -30,10 +30,12 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
       template = template.replace(regex, String(value));
     });
 
+    console.log("-----puppeter----");
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
+    console.log("-----browser----");
     const page = await browser.newPage();
 
     await page.setViewport({ width: 400, height: 200 });
