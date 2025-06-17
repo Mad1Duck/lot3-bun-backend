@@ -9,6 +9,7 @@ import routes from './routes';
 import { errorHandler } from '@/middleware/error.middleware';
 import { join } from 'path';
 import { wsHandler } from './websocket';
+import { generateApiKey } from './utils/randomNumber';
 
 const { websocket } = createBunWebSocket();
 
@@ -46,7 +47,13 @@ const app = new Hono<{ Variables: Variables; }>()
     const file = Bun.file(filePath);
     return new Response(file);
   })
-
+  .get('/generate-key', (c) => {
+    const newKey = generateApiKey();
+    return c.json({
+      message: "API key generated successfully",
+      apiKey: newKey,
+    });
+  })
   .use('/file-data/*', serveStatic({
     root: './public',
     rewriteRequestPath: (path) => {

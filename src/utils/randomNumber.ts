@@ -5,3 +5,5 @@ export const hashNumberArray = (arr: number[]): number => {
   const hash = crypto.createHash('sha256').update(str).digest('hex');
   return parseInt(hash.slice(0, 8), 16);
 };
+
+export const generateApiKey = () => crypto.randomBytes(32).toString('hex'); 
