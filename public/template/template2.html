@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kartu Lottr3</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet" />
+    <!-- Virtual -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+      rel="stylesheet" />
+    <!-- Summer -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap"
+      rel="stylesheet" />
+    <!-- Lucidity Expand Alt -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap"
+      rel="stylesheet" />
+    <!-- More Sugar Alt -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap"
+      rel="stylesheet" />
+    <!-- Intro Pro Alt -->
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: white;
+        font-family: sans-serif;
+      }
+
+      .card {
+        width: 700px;
+        height: 350px;
+        background: linear-gradient(to right, #4776e6, #8e54e9);
+        margin: 50px auto;
+        padding: 40px;
+        position: relative;
+        color: #1f3473;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        /* border-radius: 10px; */
+      }
+
+      .serial {
+        position: absolute;
+        top: 32px;
+        left: 40px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 26px;
+        color: white;
+      }
+
+      .date {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 36px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .active {
+        position: absolute;
+        bottom: 30px;
+        right: 30px;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 32px;
+        font-weight: bold;
+        color: white;
+      }
+
+      .title {
+        font-size: 90px;
+        color: white;
+        font-family: 'Paytone One', sans-serif;
+        letter-spacing: 5px;
+      }
+
+      .summer {
+        font-family: 'Great Vibes', cursive;
+        color: #1f3473;
+        font-size: 69px;
+        position: absolute;
+        top: 80px;
+        left: 50px;
+      }
+
+      .winning-label {
+        font-family: 'Fredoka One', cursive;
+        font-size: 24px;
+        margin-top: 20px;
+        color: white;
+      }
+
+      .numbers {
+        display: flex;
+        gap: 25px;
+        margin-top: 15px;
+      }
+
+      .ball {
+        width: 65px;
+        height: 65px;
+        background-color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: 'VT323', monospace;
+        font-size: 32px;
+        color: #1f3473;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ticket" class="card">
+      <div class="serial">NO. # {{id}}</div>
+      <div class="date">{{enrollDate}}</div>
+      <div class="summer">{{eventName}}</div>
+      <div class="title" style="margin-top: 60px">LOTTR3</div>
+
+      <div class="winning-label">TICKET NUMBER</div>
+      <div class="numbers">
+        <div class="ball">{{num0}}</div>
+        <div class="ball">{{num1}}</div>
+        <div class="ball">{{num2}}</div>
+        <div class="ball">{{num3}}</div>
+        <div class="ball">{{num4}}</div>
+        <div class="ball">{{num5}}</div>
+      </div>
+
+      <div class="active">ACTIVE</div>
+    </div>
+  </body>
+</html>

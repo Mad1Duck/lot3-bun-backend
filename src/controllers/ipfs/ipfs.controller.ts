@@ -5,20 +5,26 @@ import fs from 'fs';
 import path from "path";
 import { pinata } from "@/bin/pinata";
 import moment from "moment";
+import { hashNumberArray } from "@/utils/randomNumber";
 
-const templatePath = path.join(__dirname, '..', '..', '..', 'public', 'template', 'template.html');
-
+const templatePath = (templateName?: string) => path.join(__dirname, '..', '..', '..', 'public', 'template', `${templateName || 'template1'}.html`);
 const outputPath = path.join(__dirname, '..', '..', '..', 'public', 'output.png');
 
 export const generateImage = catchAsync(async (c) => {
-  const { ticketNumber } = await c.req.parseBody();
+  const { ticketNumber, startDate, endDate, template, eventName } = await c.req.parseBody();
   const parseTicketNumber = JSON.parse(ticketNumber as string);
 
-  // generate image
-  const imagePath = await htmlToImage(templatePath, outputPath, {
+  const baseData = {
+    id: hashNumberArray(parseTicketNumber),
+    eventName: eventName as string || "",
     ticketNumber: parseTicketNumber,
     enrollDate: moment().format('YYYY-MM-DD'),
-  });
+    startDate: startDate as string || "",
+    endDate: endDate as string || ""
+  };
+
+  // generate image
+  const imagePath = await htmlToImage(templatePath(template as string), outputPath, baseData);
 
   const imageBuffer = fs.readFileSync(imagePath);
   const base64String = imageBuffer.toString('base64');
@@ -28,6 +34,7 @@ export const generateImage = catchAsync(async (c) => {
   fs.unlinkSync(imagePath);
 
   const metadata = {
+    ...baseData,
     imageCID: upload.cid,
     ticketNumber: parseTicketNumber,
   };
@@ -40,9 +47,9 @@ export const generateImage = catchAsync(async (c) => {
 export const metadataByCid = catchAsync(async (c) => {
   const { cid } = c.req.param();
 
-  const response = await pinata.files.public.get(cid) as any;
-  const buffer = await response?.arrayBuffer();
-  const jsonString = Buffer.from(buffer).toString('utf-8');
-  const data = JSON.parse(jsonString);
+  const response = await fetch(`https://gateway.pinata.cloud/ipfs/${cid}`);
+  const data = await response.json();
+
+  return c.json({ data });
 });
 

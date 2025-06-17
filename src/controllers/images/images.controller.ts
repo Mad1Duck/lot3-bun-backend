@@ -1,46 +1,45 @@
+import { ipfs, ipfsHost } from "@/bin/ipfs";
 import { catchAsync } from "@/utils/catchAsync";
 import { htmlToImage } from "@/utils/generateImage";
 import fs from 'fs';
 import path from "path";
+import { ethers } from 'ethers';
+import { ERC721Config } from '@/bin/config';
+import abi from "@/bin/abi/LotteryTicket.json";
 import { pinata } from "@/bin/pinata";
 import moment from "moment";
+import { hashNumberArray } from "@/utils/randomNumber";
 
 
-const templatePath = path.join(__dirname, '..', '..', '..', 'public', 'template', 'template.html');
+const templatePath = (templateName?: string) => path.join(__dirname, '..', '..', '..', 'public', 'template', `${templateName || 'template1'}.html`);
 
 const outputPath = path.join(__dirname, '..', '..', '..', 'public', 'output.png');
 
 export const generateImage = catchAsync(async (c) => {
-  const { ticketNumber } = await c.req.parseBody();
+  const { ticketNumber, startDate, endDate, template, eventName } = await c.req.parseBody();
   const parseTicketNumber = JSON.parse(ticketNumber as string);
 
   // generate image
-  const imagePath = await htmlToImage(templatePath, outputPath, {
+  const imagePath = await htmlToImage(templatePath(template as string), outputPath, {
+    id: hashNumberArray(parseTicketNumber),
+    eventName: eventName as string || "",
     ticketNumber: parseTicketNumber,
     enrollDate: moment().format('YYYY-MM-DD'),
+    startDate: startDate as string || "",
+    endDate: endDate as string || ""
   });
 
   const imageBuffer = fs.readFileSync(imagePath);
-  const base64String = imageBuffer.toString('base64');
-
-  const upload = await pinata.upload.public.base64(base64String);
-
-  fs.unlinkSync(imagePath);
-
-  const metadata = {
-    imageCID: upload.cid,
-    ticketNumber: parseTicketNumber,
-  };
-
-  const uploadedMetadata = await pinata.upload.public.json(metadata);
 
 
-
-  return c.json({ cid: uploadedMetadata.cid });
+  return c.body(imageBuffer, 200, {
+    'Content-Type': 'image/png',
+    'Content-Disposition': 'inline; filename="result.png"'
+  });
 });
 
 export const mintTicket = catchAsync(async (c) => {
-  const resultPath = await htmlToImage(templatePath, outputPath, {
+  const resultPath = await htmlToImage(templatePath(), outputPath, {
     ticketNumber: [7, 14, 21, 28, 35, 42],
     enrollDate: moment().format('YYYY-MM-DD'),
   });

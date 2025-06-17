@@ -4,8 +4,12 @@ import path from "path";
 import { isArray } from "lodash";
 
 export interface Metadata {
+  id?: number;
+  eventName?: string;
   ticketNumber: number[],
   enrollDate: string,
+  startDate?: string,
+  endDate?: string,
 }
 
 async function safeBrowserClose(browser: any, timeout = 5000) {
@@ -38,7 +42,7 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
     });
     const page = await browser.newPage();
-    await page.setViewport({ width: 800, height: 600 });
+    await page.setViewport({ width: 800, height: 700 });
 
     await page.setContent(template, { waitUntil: 'networkidle0' });
 
