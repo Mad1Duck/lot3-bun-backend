@@ -67,6 +67,8 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
     console.error("Error in htmlToImage:", error);
     throw error;
   } finally {
+    console.log(browser, '-----browser-----');
+
     if (browser) await browser.close();
   }
 }
