@@ -42,6 +42,7 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
 
     await page.setContent(template, { waitUntil: "networkidle0" });
     await page.waitForSelector('#ticket');
+    console.log("-----ticket-----");
     const ticketElement = await page.$('#ticket');
     await ticketElement?.screenshot({ path: outputPath as `${string}.png` });
 
