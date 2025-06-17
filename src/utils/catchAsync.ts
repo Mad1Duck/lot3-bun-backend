@@ -8,6 +8,8 @@ export const catchAsync = <T>(fn: (c: Context, next: Next) => T) => async (c: Co
     const result = await fn(c, next) as T;
     return result as T extends Promise<infer U> ? U : T;
   } catch (error: any) {
+    console.log(error, '-----error-----');
+
     if (error instanceof ApiError) {
       const { response, statusCode } = await errorConverter({ message: error.message, statusCode: error.statusCode });
       throw new HTTPException(statusCode, { message: response.message });
