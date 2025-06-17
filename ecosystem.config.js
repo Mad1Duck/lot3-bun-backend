@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "lot3-backend",
       script: "bun",
-      args: ["run", "--hot", "src/index.ts"],
+      args: ["run", "src/index.ts"],
       instances: 1,
       autorestart: true,
       watch: false,
