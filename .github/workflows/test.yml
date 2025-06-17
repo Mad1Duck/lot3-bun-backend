@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   test:
-    runs-on: lot3-backend # Gunakan runner GitHub standar dulu untuk debug
+    runs-on: dev # Gunakan runner GitHub standar dulu untuk debug
     steps:
       - name: Say Hello
         run: echo "Hello from test trigger!"

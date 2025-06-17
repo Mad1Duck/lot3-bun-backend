@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: [self-hosted, lot3-backend]
+    runs-on: [self-hosted, dev]
     env:
       ENV_FILE: .env
 
