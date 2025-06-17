@@ -2,6 +2,7 @@ name: Test Trigger
 on:
   push:
     branches: [development]
+  workflow_dispatch:
 jobs:
   test:
     runs-on: lot3-backend # Gunakan runner GitHub standar dulu untuk debug
