@@ -27,6 +27,8 @@ export const generateImage = catchAsync(async (c) => {
       ticketNumber: parseTicketNumber,
       enrollDate: moment().format('YYYY-MM-DD'),
     });
+    console.log(imagePath, '-----imagePath-----');
+
     console.log("-----buffer-----");
     const imageBuffer = fs.readFileSync(imagePath);
     console.log("-----base64-----");
