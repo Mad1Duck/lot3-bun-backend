@@ -10,7 +10,7 @@ import { errorHandler } from '@/middleware/error.middleware';
 import { join } from 'path';
 import { wsHandler } from './websocket';
 
-const { upgradeWebSocket, websocket } = createBunWebSocket();
+const { websocket } = createBunWebSocket();
 
 
 type Variables = JwtVariables;
