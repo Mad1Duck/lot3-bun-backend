@@ -5,7 +5,7 @@ import { generateImage, mintTicket } from '@/controllers/images/images.controlle
 
 const app = new Hono()
     .post('/upload', uploadThing)
-    .post('/generate', generateImage)
+    .post('/upload-pinata', generateImage)
     .post('/mint', mintTicket);
 
 export default app;
