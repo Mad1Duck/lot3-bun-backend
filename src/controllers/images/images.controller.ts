@@ -46,11 +46,11 @@ export const generateImage = catchAsync(async (c) => {
     ticketNumber: parseTicketNumber,
   };
 
-  const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
+  const uploadedMetadata = await pinata.upload.public.json(metadata);
 
 
 
-  return c.json({ cid: uploadedMetadata.path });
+  return c.json({ cid: uploadedMetadata.cid });
 
   return c.body(imageBuffer, 200, {
     'Content-Type': 'image/png',
