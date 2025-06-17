@@ -78,14 +78,16 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
     if (browser) {
       try {
         const pages = await browser.pages();
-        await Promise.all(pages.map(page => page.close()));
+        await Promise.all(pages.map((page) => page.close()));
 
         await Promise.race([
           browser.close(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('browser.close() timeout')), 5000)),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Timeout saat menutup browser')), 5000)
+          ),
         ]);
-      } catch (e) {
-        console.error("Error while closing browser:", e);
+      } catch (error) {
+        console.error("Error saat menutup browser:", error);
       }
     }
   }
