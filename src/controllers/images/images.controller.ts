@@ -16,42 +16,47 @@ const outputPath = path.join(__dirname, '..', '..', '..', 'public', 'output.png'
 
 export const generateImage = catchAsync(async (c) => {
 
-  const { ticketNumber } = await c.req.parseBody();
-  const parseTicketNumber = JSON.parse(ticketNumber as string);
+  try {
+    const { ticketNumber } = await c.req.parseBody();
+    const parseTicketNumber = JSON.parse(ticketNumber as string);
 
-  // generate image
-  const imagePath = await htmlToImage(templatePath, outputPath, {
-    ticketNumber: parseTicketNumber,
-    enrollDate: moment().format('YYYY-MM-DD'),
-  });
-  const imageBuffer = fs.readFileSync(imagePath);
-
-
-  // uplaod image ipfs
-  const uploadedImage = await ipfs.add(imageBuffer);
-  const imageUri = `${uploadedImage.path}`;
-  fs.unlinkSync(imagePath);
-
-  // upload ipfs metadata
-  const metadata = {
-    imageCID: imageUri,
-    ticketNumber: parseTicketNumber,
-  };
-
-  const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
+    // generate image
+    const imagePath = await htmlToImage(templatePath, outputPath, {
+      ticketNumber: parseTicketNumber,
+      enrollDate: moment().format('YYYY-MM-DD'),
+    });
+    const imageBuffer = fs.readFileSync(imagePath);
 
 
+    // uplaod image ipfs
+    const uploadedImage = await ipfs.add(imageBuffer);
+    const imageUri = `${uploadedImage.path}`;
+    fs.unlinkSync(imagePath);
 
-  return c.json({ cid: uploadedMetadata.path });
+    // upload ipfs metadata
+    const metadata = {
+      imageCID: imageUri,
+      ticketNumber: parseTicketNumber,
+    };
 
-  // return c.body(imageBuffer, 200, {
-  //   'Content-Type': 'image/png',
-  //   'Content-Disposition': 'inline; filename="result.png"'
-  // });
+    const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
+
+
+
+    return c.json({ cid: uploadedMetadata.path });
+
+    // return c.body(imageBuffer, 200, {
+    //   'Content-Type': 'image/png',
+    //   'Content-Disposition': 'inline; filename="result.png"'
+    // });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 });
 
 export const mintTicket = catchAsync(async (c) => {
-  const resultPath = await convertHtmlToImage(templatePath, outputPath, {
+  const resultPath = await htmlToImage(templatePath, outputPath, {
     ticketNumber: [7, 14, 21, 28, 35, 42],
     enrollDate: moment().format('YYYY-MM-DD'),
   });
