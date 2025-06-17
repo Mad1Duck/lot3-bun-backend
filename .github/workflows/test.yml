@@ -5,6 +5,6 @@ on:
 
 jobs:
   test:
-    runs-on: self-hosted
+    runs-on: lot3
     steps:
       - run: echo "Manual dispatch works!"
