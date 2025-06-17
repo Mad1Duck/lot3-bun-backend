@@ -19,12 +19,12 @@ jobs:
           echo "Current directory: $(pwd)"
 
       - name: Add Permissions
-        run: chmod -R 755 /home/app/lot3/backend
+        run: chmod -R 755 /home/app/lot3/backend/work
 
       - name: Copy to jitsi-backend only if different
         run: |
           SOURCE_DIR=$(pwd)
-          TARGET_DIR="/home/app/lot3/backend"
+          TARGET_DIR="/home/app/lot3/backend/work"
 
           if [ "$SOURCE_DIR" != "$TARGET_DIR" ]; then
             rm -rf "$TARGET_DIR"/*
@@ -34,18 +34,18 @@ jobs:
           fi
 
       - name: Check target directory
-        working-directory: /home/app/lot3/backend
+        working-directory: /home/app/lot3/backend/work
         run: |
           echo "Target directory: $(pwd)"
 
       - name: Install dependencies with Bun
-        working-directory: /home/app/lot3/backend
+        working-directory: /home/app/lot3/backend/work
         run: bun install
 
       - name: Generate Prisma Client
-        working-directory: /home/app/lot3/backend
+        working-directory: /home/app/lot3/backend/work
         run: bunx drizzle-kit generate
 
       - name: Restart PM2 Process
-        working-directory: /home/app/lot3/backend
+        working-directory: /home/app/lot3/backend/work
         run: pm2 restart ecosystem.config.js
