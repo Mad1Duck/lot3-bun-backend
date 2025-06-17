@@ -21,15 +21,21 @@ export const generateImage = catchAsync(async (c) => {
     const parseTicketNumber = JSON.parse(ticketNumber as string);
 
     // generate image
+    console.log("-----startConvert-----");
+
     const imagePath = await htmlToImage(templatePath, outputPath, {
       ticketNumber: parseTicketNumber,
       enrollDate: moment().format('YYYY-MM-DD'),
     });
     const imageBuffer = fs.readFileSync(imagePath);
     const base64String = imageBuffer.toString('base64');
+    console.log("-----endConvert-----");
 
     // uplaod image ipfs
+    console.log("-----startPinata-----");
     const upload = await pinata.upload.public.base64(base64String);
+    console.log("-----endPinata-----");
+
     fs.unlinkSync(imagePath);
 
     // upload ipfs metadata
