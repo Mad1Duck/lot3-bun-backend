@@ -1,0 +1,10 @@
+name: Test Trigger
+on:
+  push:
+    branches: [development]
+jobs:
+  test:
+    runs-on: ubuntu-latest # Gunakan runner GitHub standar dulu untuk debug
+    steps:
+      - name: Say Hello
+        run: echo "Hello from test trigger!"
