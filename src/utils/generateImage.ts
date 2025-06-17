@@ -8,6 +8,14 @@ export interface Metadata {
   enrollDate: string,
 }
 
+async function safeBrowserClose(browser: any, timeout = 5000) {
+  if (!browser) return;
+  await Promise.race([
+    browser.close(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('browser.close() timeout')), timeout)),
+  ]);
+}
+
 export async function htmlToImage(templatePath: string, outputPath = "output.png", metadata: Metadata) {
   let browser;
   try {
@@ -67,9 +75,19 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
     console.error("Error in htmlToImage:", error);
     throw error;
   } finally {
-    console.log(browser, '-----browser-----');
+    if (browser) {
+      try {
+        const pages = await browser.pages();
+        await Promise.all(pages.map(page => page.close()));
 
-    if (browser) await browser.close();
+        await Promise.race([
+          browser.close(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('browser.close() timeout')), 5000)),
+        ]);
+      } catch (e) {
+        console.error("Error while closing browser:", e);
+      }
+    }
   }
 }
 
