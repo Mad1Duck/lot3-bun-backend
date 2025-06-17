@@ -65,16 +65,13 @@ export async function svgManipulator(
       console.log(`Folder created: ${dir}`);
     }
 
-    // Load template
     let template = fs.readFileSync(templatePath, "utf8");
 
-    // Replace metadata placeholders {{key}}
     for (const [key, value] of Object.entries(metadata)) {
       const regex = new RegExp(`{{${key}}}`, "g");
       template = template.replace(regex, isArray(value) ? value.join("") : String(value));
     }
 
-    // Replace ticketNumber placeholders {{num0}}, {{num1}}, ...
     if (Array.isArray(metadata.ticketNumber)) {
       metadata.ticketNumber.forEach((value, index) => {
         const regex = new RegExp(`{{num${index}}}`, "g");
@@ -90,11 +87,9 @@ export async function svgManipulator(
     const page = await browser.newPage();
     await page.setViewport({ width: 400, height: 200 });
 
-    // Load template content as page HTML
     await page.setContent(template, { waitUntil: "networkidle0" });
     await page.waitForSelector('#ticket');
 
-    // Screenshot #ticket element only
     const ticketElement = await page.$('#ticket');
     if (!ticketElement) {
       throw new Error('Ticket element not found in template');
