@@ -26,16 +26,15 @@ export const generateImage = catchAsync(async (c) => {
       enrollDate: moment().format('YYYY-MM-DD'),
     });
     const imageBuffer = fs.readFileSync(imagePath);
-
+    const base64String = imageBuffer.toString('base64');
 
     // uplaod image ipfs
-    const uploadedImage = await ipfs.add(imageBuffer);
-    const imageUri = `${uploadedImage.path}`;
+    const upload = await pinata.upload.public.base64(base64String);
     fs.unlinkSync(imagePath);
 
     // upload ipfs metadata
     const metadata = {
-      imageCID: imageUri,
+      imageCID: upload.cid,
       ticketNumber: parseTicketNumber,
     };
 
