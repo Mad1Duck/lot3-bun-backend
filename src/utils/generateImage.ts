@@ -51,6 +51,8 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
     console.log("-----screenshot-----");
     await ticketElement.screenshot({ path: outputPath as `${string}.png` });
 
+    console.log(`----Done ScreenShot-----`);
+
     await browser.close();
 
     console.log(`File created at: ${outputPath}`);
