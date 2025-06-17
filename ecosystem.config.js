@@ -6,7 +6,7 @@ module.exports = {
       args: ["run", "src/index.ts"],
       interpreter: "",
       instances: 1,
-      autorestart: true,
+      autorestart: false,
       watch: false,  // matikan watch dari PM2 biar gak bentrok sama --hot bun
       max_memory_restart: "0", // matikan limit dulu
       env: {
