@@ -1,11 +1,10 @@
-name: Test Trigger
+name: Manual Dispatch Test
+
 on:
-  push:
-    branches: [development]
   workflow_dispatch:
+
 jobs:
   test:
-    runs-on: dev # Gunakan runner GitHub standar dulu untuk debug
+    runs-on: ubuntu-latest
     steps:
-      - name: Say Hello
-        run: echo "Hello from test trigger!"
+      - run: echo "Manual dispatch works!"
