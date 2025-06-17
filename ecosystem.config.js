@@ -3,14 +3,12 @@ module.exports = {
     {
       name: "lot3-backend",
       script: "bun",
-      args: "run dev",
+      args: ["run", "--hot", "src/index.ts"],
+      interpreter: "",
       instances: 1,
       autorestart: true,
-      watch: false,
-      max_memory_restart: "0",
-      out_file: "./logs/out.log",
-      error_file: "./logs/error.log",
-      log_date_format: "YYYY-MM-DD HH:mm Z",
+      watch: false,  // matikan watch dari PM2 biar gak bentrok sama --hot bun
+      max_memory_restart: "0", // matikan limit dulu
       env: {
         PATH: `${process.env.HOME}/.bun/bin:${process.env.PATH}`,
         NODE_ENV: "development",
@@ -21,6 +19,9 @@ module.exports = {
         NODE_ENV: "production",
         PORT: 8082,
       },
+      out_file: "./logs/out.log",
+      error_file: "./logs/error.log",
+      log_date_format: "YYYY-MM-DD HH:mm Z",
     },
   ],
 };
