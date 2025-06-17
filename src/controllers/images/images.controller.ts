@@ -34,23 +34,23 @@ export const generateImage = catchAsync(async (c) => {
   console.log("-----endConvert-----");
 
   // uplaod image ipfs
-  // console.log("-----startPinata-----");
-  // const upload = await pinata.upload.public.base64(base64String);
-  // console.log("-----endPinata-----");
+  console.log("-----startPinata-----");
+  const upload = await pinata.upload.public.base64(base64String);
+  console.log("-----endPinata-----");
 
-  // fs.unlinkSync(imagePath);
+  fs.unlinkSync(imagePath);
 
-  // // upload ipfs metadata
-  // const metadata = {
-  //   imageCID: upload.cid,
-  //   ticketNumber: parseTicketNumber,
-  // };
+  // upload ipfs metadata
+  const metadata = {
+    imageCID: upload.cid,
+    ticketNumber: parseTicketNumber,
+  };
 
-  // const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
+  const uploadedMetadata = await ipfs.add(JSON.stringify(metadata));
 
 
 
-  // return c.json({ cid: uploadedMetadata.path });
+  return c.json({ cid: uploadedMetadata.path });
 
   return c.body(imageBuffer, 200, {
     'Content-Type': 'image/png',
