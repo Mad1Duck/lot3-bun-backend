@@ -49,9 +49,9 @@ export async function htmlToImage(templatePath: string, outputPath = "output.png
       throw new Error("Element #ticket not found for screenshot.");
     }
     console.log("-----screenshot-----");
-    await ticketElement.screenshot({ path: outputPath as `${string}.png` });
+    const res = await ticketElement.screenshot({ path: outputPath as `${string}.png` });
 
-    console.log(`----Done ScreenShot-----`);
+    console.log(`----Done ScreenShot-----`, res);
 
     await browser.close();
 
