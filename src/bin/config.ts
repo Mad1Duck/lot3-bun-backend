@@ -17,7 +17,7 @@ export const emailConfig = {
 };
 
 export const ERC721Config = {
-  contractAddress: process.env.CONTRACT_ADDRESS || '0x9E8B1666Eb68499E632b23e08F66Ead3DcD92089',
+  contractAddress: process.env.CONTRACT_ADDRESS || '',
   privateKey: process.env.PRIVATE_KEY || '',
   rpcURL: process.env.RPC_URL || 'https://testnet-rpc.monad.xyz/'
 };
