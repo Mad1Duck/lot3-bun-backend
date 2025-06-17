@@ -9,57 +9,38 @@ export interface metadata {
 }
 
 export async function htmlToImage(templatePath: string, outputPath = "output.png", metadata: metadata) {
+  let browser;
   try {
-    const dir = path.dirname(outputPath);
-
-
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-      console.log(`Folder created: ${dir}`);
-    }
-
-    let template = fs.readFileSync(templatePath, "utf8");
-
-    for (const [key, value] of Object.entries(metadata)) {
-      const regex = new RegExp(`{{${key}}}`, "g");
-      template = template.replace(regex, isArray(value) ? value.join("") : value);
-    }
-
-    metadata.ticketNumber.map((value, index) => {
-      const regex = new RegExp(`{{num${index}}}`, "g");
-      template = template.replace(regex, String(value));
-    });
-
-    console.log("-----puppeter----");
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
     });
-    console.log("-----browser----");
     const page = await browser.newPage();
+    await page.setViewport({ width: 800, height: 600 });
 
-    await page.setViewport({ width: 400, height: 200 });
-
-    await page.setContent(template, { waitUntil: "networkidle0" });
+    await page.setContent(templatePath, { waitUntil: 'networkidle0' });
     await page.waitForSelector('#ticket');
-    console.log("-----ticket-----", outputPath);
+
     const ticketElement = await page.$('#ticket');
     if (!ticketElement) {
-      console.error("Error: Element #ticket was not found after waiting for selector.");
-      throw new Error("Element #ticket not found for screenshot.");
+      throw new Error("Element #ticket not found.");
     }
-    console.log("-----screenshot-----");
-    const res = await ticketElement.screenshot({ path: outputPath as `${string}.png` });
 
-    console.log(`----Done ScreenShot-----`, res);
+    const boundingBox = await ticketElement.boundingBox();
+    console.log("BoundingBox:", boundingBox);
+    if (!boundingBox) {
+      throw new Error("#ticket element invisible / no bounding box.");
+    }
 
-    await browser.close();
+    await ticketElement.screenshot({ path: outputPath as `${string}.png` });
 
-    console.log(`File created at: ${outputPath}`);
+    console.log(`Screenshot saved at: ${outputPath}`);
     return outputPath;
   } catch (error) {
-    console.error("Error during convertHtmlToImage:", error);
+    console.error("Error in htmlToImage:", error);
     throw error;
+  } finally {
+    if (browser) await browser.close();
   }
 }
 
